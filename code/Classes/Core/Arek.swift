@@ -331,33 +331,35 @@ open class ArekBasePermission {
                                             message: String,
                                             allowButtonTitle: String,
                                             denyButtonTitle: String) {
-        
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let allow = UIAlertAction(title: allowButtonTitle, style: .default) { _ in
-            alert.dismiss(animated: true, completion: nil)
-            
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-            if #available(iOS 10.0, *) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            } else {
-                UIApplication.shared.openURL(url)
+
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+            let allow = UIAlertAction(title: allowButtonTitle, style: .default) { _ in
+                alert.dismiss(animated: true, completion: nil)
+
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                if #available(iOS 10.0, *) {
+                    UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                } else {
+                    UIApplication.shared.openURL(url)
+                }
             }
-        }
-        
-        let deny = UIAlertAction(title: denyButtonTitle, style: .cancel) { _ in
-            alert.dismiss(animated: true, completion: nil)
-        }
-        
-        alert.addAction(deny)
-        alert.addAction(allow)
-        
-        if var topController = UIApplication.shared.keyWindow?.rootViewController {
-            while let presentedViewController = topController.presentedViewController {
-                topController = presentedViewController
+
+            let deny = UIAlertAction(title: denyButtonTitle, style: .cancel) { _ in
+                alert.dismiss(animated: true, completion: nil)
             }
-            
-            topController.present(alert, animated: true, completion: nil)
+
+            alert.addAction(deny)
+            alert.addAction(allow)
+
+            if var topController = UIApplication.shared.keyWindow?.rootViewController {
+                while let presentedViewController = topController.presentedViewController {
+                    topController = presentedViewController
+                }
+
+                topController.present(alert, animated: true, completion: nil)
+            }
         }
 
     }
